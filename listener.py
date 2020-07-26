@@ -49,7 +49,7 @@ def push_data(action):
                 image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
             else:
                 req = WCAPI.get(
-                    f'products/{data["line_items"][i]["id"]}').json()    
+                    f'products/{data["line_items"][i]["id"]}').json()
                 image_url = req['images'][0]['src']
 
             data['line_items'][i].update({'product_img_url': image_url})
@@ -95,3 +95,5 @@ def push_data(action):
             return response
     except TypeError:
         return Response(status=404)
+    except AttributeError:
+        return Response(status=400)
