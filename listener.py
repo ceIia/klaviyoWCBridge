@@ -38,6 +38,9 @@ def lookup(json_object, search_term):
 def push_data(action):
     access_ip = request.access_route[0]
     data = request.json
+    if data is None:
+        return Response(status=204)
+
     if action == 'orderCreated':
         event = 'New Woocommerce Order'
 
@@ -49,9 +52,8 @@ def push_data(action):
                 image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
             else:
                 req = WCAPI.get(
-                    f'products/{data["line_items"][i]["id"]}').json()
+                    f'products/{data["line_items"][i]["product_id"]}').json()
                 image_url = req['images'][0]['src']
-
             data['line_items'][i].update({'product_img_url': image_url})
 
     elif action == 'orderUpdated' and data['status'] == 'completed':
@@ -66,8 +68,6 @@ def push_data(action):
     try:
         if access_ip in IP_LISTS:
             customer = data['billing']
-            print(access_ip)
-            print(IP_LISTS)
             CLIENT.Public.track(event,
                                 email=customer['email'],
                                 properties=data,
