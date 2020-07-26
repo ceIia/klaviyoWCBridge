@@ -41,16 +41,18 @@ def push_data(action):
     if action == 'orderCreated':
         event = 'New Woocommerce Order'
 
-        for counter, item in enumerate(data['line_items']):
-            if item['sku'] == 'retroconsole-en':
-                raw_design = lookup(item['meta_data'], 'Design')
+        for i in range(len(data['line_items'])):
+            if data['line_items'][i]['sku'] == 'retroconsole-en':
+                raw_design = lookup(
+                    data['line_items'][i]['meta_data'], 'Design')
                 design = raw_design[0].lower()
                 image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
             else:
-                req = WCAPI.get(f'products/{item["id"]}').json()
+                req = WCAPI.get(
+                    f'products/{data["line_items"][i]["id"]}').json()    
                 image_url = req['images'][0]['src']
 
-            data['line_items'][counter].update({'product_img_url': image_url})
+            data['line_items'][i].update({'product_img_url': image_url})
 
     elif action == 'orderUpdated' and data['status'] == 'completed':
         event = "Fulfilled Woocommerce Order"
