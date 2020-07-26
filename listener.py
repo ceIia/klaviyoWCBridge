@@ -43,7 +43,8 @@ def push_data(action):
 
         for counter, item in enumerate(data['line_items']):
             if item['sku'] == 'retroconsole-en':
-                design = lookup(item['meta_data'], 'Design').lower()
+                raw_design = lookup(item['meta_data'], 'Design')
+                design = raw_design[0].lower()
                 image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
             else:
                 req = WCAPI.get(f'products/{item["id"]}').json()
