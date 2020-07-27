@@ -50,19 +50,20 @@ def push_data(action):
                 try:
                     raw_design = lookup(
                         data['line_items'][i]['meta_data'], 'Design')
-                    design = raw_design[0].lower()
-                    image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
+                    ct = raw_design[0].lower()
+                    img_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{ct}.jpg'
                 except IndexError:
                     return Response(status=400)
             else:
                 try:
                     req = WCAPI.get(
-                        f'products/{data["line_items"][i]["product_id"]}').json()
-                    image_url = req['images'][0]['src']
+                        f'products/{data["line_items"][i]["product_id"]}'
+                    ).json()
+                    img_url = req['images'][0]['src']
                 except IndexError:
                     return Response(status=400)
-                    
-            data['line_items'][i].update({'product_img_url': image_url})
+
+            data['line_items'][i].update({'product_img_url': img_url})
 
     elif action == 'orderUpdated' and data['status'] == 'completed':
         event = "Fulfilled Woocommerce Order"
