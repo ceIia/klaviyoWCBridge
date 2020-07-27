@@ -38,6 +38,7 @@ def lookup(json_object, search_term):
 def push_data(action):
     access_ip = request.access_route[0]
     data = request.json
+    print(data)
     if data is None:
         return Response(status=204)
 
@@ -46,14 +47,21 @@ def push_data(action):
 
         for i in range(len(data['line_items'])):
             if data['line_items'][i]['sku'] == 'retroconsole-en':
-                raw_design = lookup(
-                    data['line_items'][i]['meta_data'], 'Design')
-                design = raw_design[0].lower()
-                image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
+                try:
+                    raw_design = lookup(
+                        data['line_items'][i]['meta_data'], 'Design')
+                    design = raw_design[0].lower()
+                    image_url = f'{os.getenv("CLOUDFRONT_URL")}/cp/en/{design}.jpg'
+                except IndexError:
+                    return Response(status=400)
             else:
-                req = WCAPI.get(
-                    f'products/{data["line_items"][i]["product_id"]}').json()
-                image_url = req['images'][0]['src']
+                try:
+                    req = WCAPI.get(
+                        f'products/{data["line_items"][i]["product_id"]}').json()
+                    image_url = req['images'][0]['src']
+                except IndexError:
+                    return Response(status=400)
+                    
             data['line_items'][i].update({'product_img_url': image_url})
 
     elif action == 'orderUpdated' and data['status'] == 'completed':
