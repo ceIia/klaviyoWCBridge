@@ -73,6 +73,8 @@ def push_data(action):
         event = "Cancelled Woocommerce Order"
     elif action == 'orderUpdated' and data['status'] == 'processing':
         return Response(status=202)
+    elif action == 'orderUpdated' and data['status'] == 'shippping':
+        return Response(status=200)
 
     try:
         if access_ip in IP_LISTS:
