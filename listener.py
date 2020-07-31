@@ -73,7 +73,7 @@ def push_data(action):
         event = "Cancelled Woocommerce Order"
     elif action == 'orderUpdated' and data['status'] == 'processing':
         return Response(status=202)
-    elif action == 'orderUpdated' and data['status'] == 'shippping':
+    elif action == 'orderUpdated' and data['status'] == 'shipping':
         event = "Shipping Woocommerce Order"
 
     try:
