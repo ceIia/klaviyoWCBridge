@@ -74,7 +74,7 @@ def push_data(action):
     elif action == 'orderUpdated' and data['status'] == 'processing':
         return Response(status=202)
     elif action == 'orderUpdated' and data['status'] == 'shippping':
-        return Response(status=200)
+        event = "Shipping Woocommerce Order"
 
     try:
         if access_ip in IP_LISTS:
@@ -107,4 +107,6 @@ def push_data(action):
     except TypeError:
         return Response(status=404)
     except AttributeError:
+        return Response(status=400)
+    except UnboundLocalError:
         return Response(status=400)
